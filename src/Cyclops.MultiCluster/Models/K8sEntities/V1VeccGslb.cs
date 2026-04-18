@@ -11,6 +11,7 @@ namespace Cyclops.MultiCluster.Models.K8sEntities
 {
     [EntityScope(EntityScope.Namespaced)]
     [KubernetesEntity(Group = "multicluster.veccsolutions.io", ApiVersion = "v1alpha", Kind = "GSLB")]
+    [KubernetesEntityShortNames("veccgslb")]
     [Description("GSLB object to expose services or ingresses across clusters")]
     public class V1VeccGslb : CustomKubernetesEntity
     {
