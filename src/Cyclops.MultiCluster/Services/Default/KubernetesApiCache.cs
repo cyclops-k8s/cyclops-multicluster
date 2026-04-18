@@ -241,7 +241,14 @@ namespace Cyclops.MultiCluster.Services.Default
             _logger.LogInformation("Beginning to synchronize cache");
             try
             {
-                _synchronizeCacheHolder.WaitOne();
+                // Non-blocking acquire: skip this sync if one is already running.
+                // Previously WaitOne() would block and queue up callers, causing
+                // cascading syncs that never let the system reach quiescence.
+                if (!_synchronizeCacheHolder.WaitOne(0))
+                {
+                    _logger.LogInformation("Cache synchronization already in progress, skipping");
+                    return;
+                }
                 _logger.LogInformation("Waiting a second");
                 await Task.Delay(1000);
                 _logger.LogInformation("Synchronizing caches");

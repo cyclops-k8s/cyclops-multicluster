@@ -24,6 +24,10 @@ namespace Cyclops.MultiCluster.Services.Default
         private readonly CancellationToken _shutdownCancellationToken;
         private readonly ManualResetEvent _shutdownEvent;
         private readonly ManualResetEventSlim  _synchronizingLocalClustersEvent = new ManualResetEventSlim(true);
+        // Tracks elapsed time since the last cache sync to enforce CacheSyncInterval.
+        // This decouples cache synchronization from the 1-second heartbeat check loop
+        // to prevent a feedback loop of excessive HostnameCache API calls.
+        private readonly System.Diagnostics.Stopwatch _cacheSyncStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         public DefaultHostnameSynchronizer(
             ILogger<DefaultHostnameSynchronizer> logger,
@@ -132,7 +136,7 @@ namespace Cyclops.MultiCluster.Services.Default
                 {
                     await _cache.SetResourceVersionAsync(service.Metadata.Uid, service.Metadata.ResourceVersion);
                 }
-                
+
                 // Group endpoint slices by service name and track counts
                 _logger.LogDebug("Tracking endpoint slices and counts");
                 var slicesByService = endpointSlices
@@ -234,7 +238,7 @@ namespace Cyclops.MultiCluster.Services.Default
                             var service = gslbServices[0]!;
                             // Get endpoint slices for this service
                             var serviceEndpointSlices = endpointSlices
-                                .Where(s => s.Namespace() == service.Namespace() && 
+                                .Where(s => s.Namespace() == service.Namespace() &&
                                        s.GetLabel("kubernetes.io/service-name") == service.Name())
                                 .ToList();
 
@@ -440,6 +444,7 @@ namespace Cyclops.MultiCluster.Services.Default
                     var clusterIdentifiers = await _cache.GetClusterIdentifiersAsync();
                     var timeout = _dateTimeProvider.UtcNow.AddSeconds(-_multiClusterOptions.Value.HeartbeatTimeout);
                     _logger.LogInformation("Pruncing clusters that haven't checked in since {timeout}", timeout);
+                    var clusterRemoved = false;
 
                     foreach (var clusterIdentifier in clusterIdentifiers)
                     {
@@ -454,11 +459,21 @@ namespace Cyclops.MultiCluster.Services.Default
                         {
                             _logger.LogWarning("Cluster heartbeat is stale for identifier {clusterIdentifier}", clusterIdentifier);
                             await _cache.RemoveClusterCacheAsync(clusterIdentifier);
+                            clusterRemoved = true;
                         }
                         else
                         {
                             _logger.LogTrace("Cluster heartbeat is valid for identifier {clusterIdentifier}", clusterIdentifier);
                         }
+                    }
+
+                    if (clusterRemoved)
+                    {
+                        // A cluster was pruned — force an immediate cache sync to remove
+                        // its stale hostname entries without waiting for the next interval.
+                        _cacheSyncStopwatch.Restart();
+                        _logger.LogInformation("Cluster removed, forcing cache synchronization");
+                        await _cache.SynchronizeCachesAsync();
                     }
                 }
                 catch (Exception exception)
@@ -466,14 +481,23 @@ namespace Cyclops.MultiCluster.Services.Default
                     _logger.LogError(exception, "Error checking cluster heartbeats");
                 }
 
-                try
+                // Run periodic cache sync on its own interval, independent of the
+                // heartbeat check loop, to avoid excessive K8s API calls.
+                if (_cacheSyncStopwatch.Elapsed.TotalSeconds >= _multiClusterOptions.Value.CacheSyncInterval)
                 {
-                    _logger.LogTrace("Making sure stale records are not in the cache");
-                    await _cache.SynchronizeCachesAsync();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogError(exception, "Error cleaning stale records in the cache");
+                    try
+                    {
+                        _logger.LogTrace("Making sure stale records are not in the cache");
+                        await _cache.SynchronizeCachesAsync();
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.LogError(exception, "Error cleaning stale records in the cache");
+                    }
+                    finally
+                    {
+                        _cacheSyncStopwatch.Restart();
+                    }
                 }
             }
 

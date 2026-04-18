@@ -81,13 +81,13 @@ spec:
             path: /Healthz/Liveness
             port: http
           initialDelaySeconds: 10
-          timeoutSeconds: 1
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /Healthz/Ready
             port: http
           initialDelaySeconds: 10
-          timeoutSeconds: 1
+          timeoutSeconds: 5
         resources:
           {{- toYaml .Values.dnsServer.resources | nindent 10 }}
         volumeMounts:

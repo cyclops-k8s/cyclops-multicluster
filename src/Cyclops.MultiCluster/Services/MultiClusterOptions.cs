@@ -9,6 +9,14 @@ namespace Cyclops.MultiCluster.Services
         public int HeartbeatTimeout { get; set; } = 30;
         public int HeartbeatCheckInterval { get; set; } = 1;
         public int HeartbeatSetInterval { get; set; } = 10;
+        /// <summary>
+        /// Interval in seconds between cache synchronization runs in the orchestrator.
+        /// Decoupled from HeartbeatCheckInterval to prevent a feedback loop where
+        /// SynchronizeCachesAsync saves trigger reconciler watches, which cause further
+        /// API calls, leading to thousands of HostnameCache API calls per minute.
+        /// This can be configured in the values.yaml of the helm chart, and should be set to a value that balances cache freshness with API call volume.
+        /// </summary>
+        public int CacheSyncInterval { get; set; } = 30;
         public int ListenGrpcPort { get; set; } = 0;
         public int ListenPort { get; set; } = 0;
         public PeerHosts[] Peers { get; set; } = Array.Empty<PeerHosts>();

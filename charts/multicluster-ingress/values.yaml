@@ -216,6 +216,10 @@ config:
   # How frequent to send heartbeat updates in seconds
   heartbeatSetInterval: 30
 
+  # How frequently the orchestrator synchronizes hostname caches in seconds.
+  # Decoupled from heartbeatCheckInterval to avoid a feedback loop of excessive API calls.
+  cacheSyncInterval: 30
+
   ################################################################################################
   ### Configuration for peer cluster communication
   ################################################################################################

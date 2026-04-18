@@ -28,6 +28,7 @@ data:
   HeartbeatCheckInterval: "{{ .Values.config.heartbeatCheckInterval }}"
   HeartbeatTimeout: "{{ .Values.config.heartbeatTimeout }}"
   HeartbeatSetInterval: "{{ .Values.config.heartbeatSetInterval }}"
+  CacheSyncInterval: "{{ .Values.config.cacheSyncInterval }}"
   Serilog__MinimumLevel__Default: "{{ .Values.config.logLevel }}"
 
   PeriodicRefreshInterval: "{{ .Values.config.periodicRefreshInterval }}"
