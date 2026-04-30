@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "kubeops.cli": {
-      "version": "10.3.3",
+      "version": "10.4.0",
       "commands": [
         "kubeops"
       ],

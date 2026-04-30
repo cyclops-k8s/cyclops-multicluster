@@ -26,19 +26,19 @@
           <NoWarn>1701;1702;CS1591</NoWarn>
         </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Destructurama.Attributed" Version="5.2.0" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
-        <PackageReference Include="KubeOps.Generator" Version="10.3.3">
+        <PackageReference Include="Destructurama.Attributed" Version="5.3.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.80.0" />
+        <PackageReference Include="KubeOps.Generator" Version="10.4.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="KubeOps.Operator.Web" Version="10.3.3" />
-        <PackageReference Include="KubeOps.Transpiler" Version="10.3.3" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
-        <PackageReference Include="NewRelic.Agent" Version="10.50.0" />
-        <PackageReference Include="NewRelic.Agent.Api" Version="10.50.0" />
+        <PackageReference Include="KubeOps.Transpiler" Version="10.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+        <PackageReference Include="NewRelic.Agent" Version="10.51.0" />
+        <PackageReference Include="NewRelic.Agent.Api" Version="10.51.0" />
         <PackageReference Include="NewRelic.LogEnrichers.Serilog" Version="1.2.0" />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.13.22" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.14.9" />
         <PackageReference Include="Serilog" Version="4.3.1" />
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
