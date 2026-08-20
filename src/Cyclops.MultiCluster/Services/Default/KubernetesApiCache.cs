@@ -1,6 +1,6 @@
 ﻿using k8s.Models;
 using KubeOps.KubernetesClient;
-using KubeOps.KubernetesClient.LabelSelectors;
+using KubeOps.KubernetesClient.Selectors;
 using Microsoft.Extensions.Options;
 using Cyclops.MultiCluster.Models.Core;
 using Cyclops.MultiCluster.Models.K8sEntities;
@@ -431,7 +431,7 @@ namespace Cyclops.MultiCluster.Services.Default
             {
                 try
                 {
-                    var clusters = await _kubernetesClient.ListAsync<V1ClusterCache>(_options.Value.Namespace, new EqualsSelector("clusteridentifier", clusterIdentifier));
+                    var clusters = await _kubernetesClient.ListAsync<V1ClusterCache>(_options.Value.Namespace, new EqualsLabelSelector("clusteridentifier", clusterIdentifier));
                     if (clusters.Count == 1)
                     {
                         _logger.LogDebug("Cluster cache entry found");

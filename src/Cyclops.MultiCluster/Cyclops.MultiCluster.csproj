@@ -32,7 +32,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="KubeOps.Operator.Web" Version="10.3.3" />
+        <PackageReference Include="KubeOps.Operator.Web" Version="13.1.2" />
         <PackageReference Include="KubeOps.Transpiler" Version="13.1.2" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
         <PackageReference Include="NewRelic.Agent" Version="10.53.1" />
