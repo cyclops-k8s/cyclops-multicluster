@@ -1,7 +1,7 @@
 ﻿using k8s;
 using k8s.Models;
 using KubeOps.KubernetesClient;
-using KubeOps.KubernetesClient.LabelSelectors;
+using KubeOps.KubernetesClient.Selectors;
 using NewRelic.Api.Agent;
 
 namespace Cyclops.MultiCluster.Services.Default
@@ -99,7 +99,7 @@ namespace Cyclops.MultiCluster.Services.Default
         {
             _logger.LogDebug("Getting endpoint slices in namespace {@namespace} for service {@serviceName}", ns, serviceName);
 
-            var result = await _kubernetesClient.ListAsync<V1EndpointSlice>(ns, new EqualsSelector(_serviceNameLabel, serviceName));
+            var result = await _kubernetesClient.ListAsync<V1EndpointSlice>(ns, new EqualsLabelSelector(_serviceNameLabel, serviceName));
             _logger.LogDebug("Done getting endpoint slices {count}", result.Count);
 
             return result;

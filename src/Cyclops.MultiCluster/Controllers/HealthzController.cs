@@ -58,7 +58,7 @@ namespace Cyclops.MultiCluster.Controllers
         /// Check if the pod is alive.
         /// This intentionally does NOT call the Kubernetes API. Liveness probes
         /// should only verify the process is responsive. The previous implementation
-        /// called GetAsync<V1Namespace>; which competed with reconciler traffic and
+        /// called GetAsync&gt;V1Namespace&lt;; which competed with reconciler traffic and
         /// timed out under load, causing unnecessary pod restarts across all components.
         /// </summary>
         /// <returns></returns>
